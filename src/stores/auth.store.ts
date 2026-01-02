@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { LoginResponse } from '@/features/auth/types/login.type'
 
 interface AuthState {
@@ -9,19 +10,26 @@ interface AuthState {
     clearUser: () => void
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-    user: null,
-    isAuthenticated: false,
-
-    setUser: (user: LoginResponse['user']) =>
-        set({
-            user,
-            isAuthenticated: true,
-        }),
-
-    clearUser: () =>
-        set({
+export const useAuthStore = create<AuthState>()(
+    persist(
+        (set) => ({
             user: null,
             isAuthenticated: false,
+
+            setUser: (user) =>
+                set({
+                    user,
+                    isAuthenticated: true,
+                }),
+
+            clearUser: () =>
+                set({
+                    user: null,
+                    isAuthenticated: false,
+                }),
         }),
-}))
+        {
+            name: 'auth-storage', // localStorage key
+        }
+    )
+)

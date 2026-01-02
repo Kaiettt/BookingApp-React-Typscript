@@ -18,6 +18,7 @@ export function useFetchProperty() {
                 const response = await searchDetailProperty.fetchPropertyDetail(query);
 
                 setResult(response)
+                localStorage.setItem('propertyDetail', JSON.stringify(response));
             } catch {
                 setError('Failed to load search results')
             } finally {

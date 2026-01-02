@@ -6,6 +6,8 @@ import SearchResultsPage from '@/features/search/pages/SearchResultsPage';
 import PropertyDetailPage from '@/features/property/pages/PropertyDetailPage';
 import LoginPage from '@/features/auth/pages/LoginPage';
 import SignupPage from '@/features/auth/pages/SignupPage';
+import ConfirmBookingPage from '@/features/booking/pages/ConfirmBooking';
+import BookingSuccessPage from '@/features/booking/pages/BookingSuccess';
 
 const routes: RouteObject[] = [
     {
@@ -34,6 +36,14 @@ const routes: RouteObject[] = [
             {
                 path: 'signup',
                 element: <SignupPage />
+            },
+            {
+                path: 'confirm-booking',
+                element: <ConfirmBookingPage />
+            },
+            {
+                path: 'booking-success',
+                element: <BookingSuccessPage />
             }
         ]
     }

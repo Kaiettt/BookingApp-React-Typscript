@@ -12,10 +12,16 @@ import PropertyAvailability from "../components/PropertyAvailability"
 import PropertyRooms from "../components/PropertyRooms"
 import PropertyReviews from "../components/PropertyReviews"
 import Breadcrumb from "../../../shared/components/layout/Breadcrumb"
+import { useState } from "react"
 
 export default function PropertyDetailPage() {
     const { result, loading, error } = useFetchProperty()
-
+    const [availability, setAvailability] = useState({
+        checkIn: '',
+        checkOut: '',
+        adults: 2,
+        children: 0
+    });
     if (loading) {
         return (
             <>
@@ -27,7 +33,7 @@ export default function PropertyDetailPage() {
             </>
         )
     }
-
+    
     if (error || !result) {
         return (
             <>
@@ -83,9 +89,12 @@ export default function PropertyDetailPage() {
 
                         <PropertyFacilities facilities={result.facilities} />
 
-                        <PropertyAvailability />
+                        <PropertyAvailability
+                            availability={availability}
+                            setAvailability={setAvailability}
+                        />
 
-                        <PropertyRooms roomTypes={result.roomTypes} />
+                        <PropertyRooms roomTypes={result.roomTypes} availability={availability} />
 
                         <PropertyReviews
                             reviews={result.reviews}

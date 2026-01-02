@@ -13,10 +13,9 @@ const apiClient: AxiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-    withCredentials: true, // refresh-token cookie
+    withCredentials: true, 
 })
 
-/* ================= REQUEST ================= */
 
 apiClient.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
@@ -45,7 +44,6 @@ const processQueue = (error: AxiosError | null, token: string | null) => {
 }
 
 apiClient.interceptors.response.use(
-    /** ✅ IMPORTANT: RETURN response.data */
     (response: AxiosResponse) => response.data,
 
     async (error: AxiosError) => {
