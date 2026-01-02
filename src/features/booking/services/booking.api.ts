@@ -1,5 +1,5 @@
 import type { BookingRequest, BookingResponse, LockRoomRequest, LockRoomResponse } from "../types/type";
-import { post } from "@/services/apiClient";
+import { get, post } from "@/services/apiClient";
 
 export const bookingApi = {
     async holdRooms(lockRoomRequest: LockRoomRequest): Promise<LockRoomResponse> {
@@ -20,6 +20,9 @@ export const bookingApi = {
             queryParams.append(key, String(value));
         });
         return post(`/payments?${queryParams.toString()}`, null);
+    },
+    async getBookingById(id: number):Promise<BookingResponse>{
+        return get(`/bookings/${id}`);
     }
 
 };

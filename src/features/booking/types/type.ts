@@ -99,5 +99,5 @@ export interface BookingResponse {
     guest: Guest;
     specialRequest: string;
     bookingReference: string;
-    items: BookingResponseItem[];
+    bookingItems: BookingResponseItem[];
 }

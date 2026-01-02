@@ -8,6 +8,7 @@ import LoginPage from '@/features/auth/pages/LoginPage';
 import SignupPage from '@/features/auth/pages/SignupPage';
 import ConfirmBookingPage from '@/features/booking/pages/ConfirmBooking';
 import BookingSuccessPage from '@/features/booking/pages/BookingSuccess';
+import PaymentCallback from '@/features/booking/pages/PaymentCallback';
 
 const routes: RouteObject[] = [
     {
@@ -44,6 +45,10 @@ const routes: RouteObject[] = [
             {
                 path: 'booking-success',
                 element: <BookingSuccessPage />
+            },
+            {
+                path: 'payments/call-back',
+                element: <PaymentCallback />
             }
         ]
     }

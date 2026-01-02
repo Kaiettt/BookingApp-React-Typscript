@@ -34,7 +34,7 @@ export function useHandleBooking() {
             };
 
             const response = await bookingApi.handleBooking(bookingRequest);
-
+            localStorage.setItem('newBooking', response.id.toString());
             localStorage.removeItem('selectedRooms');
             return response;
         } catch (err: any) {
