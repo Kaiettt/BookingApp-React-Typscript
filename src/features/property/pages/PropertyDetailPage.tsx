@@ -13,6 +13,7 @@ import PropertyRooms from "../components/PropertyRooms"
 import PropertyReviews from "../components/PropertyReviews"
 import Breadcrumb from "../../../shared/components/layout/Breadcrumb"
 import { useState } from "react"
+import { Star, MapPin } from "lucide-react"
 
 export default function PropertyDetailPage() {
     const { result, loading, error } = useFetchProperty()
@@ -33,7 +34,7 @@ export default function PropertyDetailPage() {
             </>
         )
     }
-    
+
     if (error || !result) {
         return (
             <>
@@ -50,7 +51,7 @@ export default function PropertyDetailPage() {
         <>
             <Header />
 
-            <main className="container mx-auto px-4 py-6 space-y-12">
+            <main className="container mx-auto px-4 py-6 space-y-8">
                 {/* BREADCRUMB */}
                 <Breadcrumb
                     items={[
@@ -72,12 +73,68 @@ export default function PropertyDetailPage() {
                     address={result.address}
                 />
 
-                {/* GALLERY */}
-                <PropertyGallery media={result.media} />
+                {/* GALLERY & MAP SECTION */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* LEFT: GALLERY (Takes up 2 columns) */}
+                    <div className="lg:col-span-2">
+                        <PropertyGallery media={result.media} />
+                    </div>
+
+                    {/* RIGHT: MAP & RATINGS (Takes up 1 column) */}
+                    <div className="space-y-6">
+                        {/* Rating Card */}
+                        {result.avgRating && (
+                            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between">
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <div className="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-xl text-xl font-bold shadow-lg shadow-blue-200">
+                                            {result.avgRating.toFixed(1)}
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-gray-900 text-lg">
+                                                {result.avgRating >= 4.5 ? 'Excellent' : 'Very Good'}
+                                            </p>
+                                            <p className="text-sm text-gray-500 underline decoration-dotted cursor-pointer hover:text-blue-600">
+                                                {result.totalRating} reviews
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="text-right hidden sm:block">
+                                    <button className="text-sm font-semibold text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors">
+                                        Read all reviews
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Map Card */}
+                        <div className="bg-white p-2 rounded-2xl border border-gray-100 shadow-sm overflow-hidden h-64 md:h-auto md:aspect-square relative group">
+                            <iframe
+                                width="100%"
+                                height="100%"
+                                frameBorder="0"
+                                style={{ border: 0, borderRadius: '12px', minHeight: '200px' }}
+                                src={`https://maps.google.com/maps?q=${encodeURIComponent(result.address.fullAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                                allowFullScreen
+                                className="w-full h-full grayscale-[20%] group-hover:grayscale-0 transition-all duration-500"
+                            ></iframe>
+
+                            <a
+                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(result.address.fullAddress)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-full shadow-lg text-sm font-semibold text-gray-800 hover:scale-105 transition-transform flex items-center gap-2"
+                            >
+                                <MapPin className="w-4 h-4 text-red-500" />
+                                Show on map
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
                 {/* MAIN CONTENT */}
                 <div className="w-full">
-                    {/* MAIN CONTENT - Full width */}
                     <div className="w-full space-y-10">
                         <PropertyOverview
                             description={result.description}

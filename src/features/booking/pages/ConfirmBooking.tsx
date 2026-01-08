@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CheckCircle, CreditCard, Banknote, Loader2 } from 'lucide-react';
+import { CheckCircle, CreditCard, Banknote, Loader2, Calendar, Users, ShieldCheck, Star, MapPin } from 'lucide-react';
 import Header from '@/shared/components/layout/Header';
 import Footer from '@/shared/components/layout/Footer';
 import { useHandleBooking } from '../hooks/useHandleBooking.hooks';
@@ -11,10 +11,9 @@ import { bookingApi } from '../services/booking.api';
 // Utility function to format dates
 const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
+        weekday: 'short',
+        month: 'short',
         day: 'numeric',
-        weekday: 'long'
     };
     return new Date(dateString).toLocaleDateString('en-US', options);
 };
@@ -145,10 +144,10 @@ export default function ConfirmBookingPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="flex flex-col items-center">
-                    <Loader2 className="h-12 w-12 text-blue-500 animate-spin mb-4" />
-                    <p className="text-gray-600">Loading your booking details...</p>
+                    <Loader2 className="h-10 w-10 text-blue-600 animate-spin mb-4" />
+                    <p className="text-gray-500 font-medium">Preparing your booking...</p>
                 </div>
             </div>
         );
@@ -156,16 +155,14 @@ export default function ConfirmBookingPage() {
 
     if (!property || !stayInfo) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center p-6 max-w-md">
-                    <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center p-8 bg-white rounded-2xl shadow-xl max-w-md w-full mx-4">
+                    <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <CheckCircle className="w-8 h-8 text-red-500" />
                     </div>
-                    <h2 className="text-xl font-bold text-gray-800 mb-2">Booking Details Not Found</h2>
-                    <p className="text-gray-600 mb-6">We couldn't find the booking details. Please start your booking again.</p>
-                    <a href="/" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200">
+                    <h2 className="text-xl font-bold text-gray-900 mb-2">Session Expired</h2>
+                    <p className="text-gray-500 mb-8">We couldn't find your booking details. Please start your search again.</p>
+                    <a href="/" className="inline-block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200">
                         Back to Home
                     </a>
                 </div>
@@ -177,305 +174,245 @@ export default function ConfirmBookingPage() {
         <div className="min-h-screen flex flex-col bg-gray-50">
             <Header />
 
-            <main className="flex-grow">
-                <div className="container mx-auto px-4 py-8 max-w-6xl">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Confirm Your Booking</h1>
-                    <p className="text-gray-600 mb-8">Please review your booking details and complete the form below</p>
+            <main className="flex-grow py-8 md:py-12">
+                <div className="container mx-auto px-4 max-w-6xl">
+                    <div className="mb-8">
+                        <h1 className="text-3xl font-bold text-gray-900">Confirm Your Booking</h1>
+                        <p className="text-gray-500 mt-2">You're just one step away from your stay</p>
+                    </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Left Column - Booking Details */}
-                        <div className="lg:col-span-2 space-y-6">
-                            {/* Property Summary */}
-                            <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        {/* Left Column - Forms */}
+                        <div className="lg:col-span-2 space-y-8">
+
+                            {/* Property Horizontal Card */}
+                            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 flex flex-col sm:flex-row gap-4 items-start">
                                 {property.media && property.media.length > 0 && (
-                                    <div className="h-64 w-full overflow-hidden">
-                                        <img
-                                            src={property.media[0].url}
-                                            alt={property.name}
-                                            className="w-full h-full object-cover"
+                                    <img
+                                        src={property.media[0].url}
+                                        alt={property.name}
+                                        className="w-full sm:w-32 h-32 object-cover rounded-xl"
+                                    />
+                                )}
+                                <div className="flex-1 min-w-0 py-1">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div>
+                                            <h2 className="text-xl font-bold text-gray-900 truncate">{property.name}</h2>
+                                            <p className="text-gray-500 text-sm flex items-center mt-1">
+                                                <MapPin className="w-3.5 h-3.5 mr-1" />
+                                                {property.address.fullAddress}
+                                            </p>
+                                        </div>
+                                        <div className="hidden sm:flex items-center bg-blue-50 text-blue-700 text-xs font-bold px-2 py-1 rounded-lg">
+                                            <Star className="w-3 h-3 mr-1 fill-blue-700" />
+                                            {property.avgRating}
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-4 flex gap-4 text-sm">
+                                        <div className="bg-gray-50 px-3 py-2 rounded-lg flex-1">
+                                            <p className="text-xs text-gray-500 mb-0.5">Check-in</p>
+                                            <p className="font-semibold text-gray-900">{formatDate(stayInfo.checkIn)}</p>
+                                        </div>
+                                        <div className="bg-gray-50 px-3 py-2 rounded-lg flex-1">
+                                            <p className="text-xs text-gray-500 mb-0.5">Check-out</p>
+                                            <p className="font-semibold text-gray-900">{formatDate(stayInfo.checkOut)}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            {/* Guest Details */}
+                            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div className="p-6 border-b border-gray-100 flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                        <Users className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-gray-900">Guest Details</h3>
+                                        <p className="text-sm text-gray-500">Who is checking in?</p>
+                                    </div>
+                                </div>
+                                <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                        <input
+                                            type="text"
+                                            value={guest.name}
+                                            onChange={(e) => setGuest({ ...guest, name: e.target.value })}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all outline-none"
+                                            placeholder="John Doe"
                                         />
                                     </div>
-                                )}
-                                <div className="p-6 border-b border-gray-100">
-                                    <h2 className="text-xl font-bold text-gray-900 mb-2">{property.name}</h2>
-                                    <p className="text-gray-500 text-sm mb-3">{property.address.fullAddress}</p>
-                                    <div className="flex items-center">
-                                        <div className="flex items-center bg-blue-50 text-blue-700 text-sm font-medium px-3 py-1 rounded-full">
-                                            <span className="text-yellow-500 mr-1">★</span>
-                                            {property.avgRating} ({property.totalRating} reviews)
-                                        </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                        <input
+                                            type="email"
+                                            value={guest.email}
+                                            onChange={(e) => setGuest({ ...guest, email: e.target.value })}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all outline-none"
+                                            placeholder="john@example.com"
+                                        />
                                     </div>
-                                </div>
-                                <div className="p-6 bg-gray-50">
-                                    <h3 className="font-semibold text-gray-800 mb-4 flex items-center">
-                                        <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                                        Your Stay Details
-                                    </h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <p className="text-sm text-gray-500">Check-in</p>
-                                            <p className="font-medium">{formatDate(stayInfo.checkIn)}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-500">Check-out</p>
-                                            <p className="font-medium">{formatDate(stayInfo.checkOut)}</p>
-                                        </div>
-                                        <div className="col-span-2">
-                                            <p className="text-sm text-gray-500">Length of stay</p>
-                                            <p className="font-medium">{nights} {nights === 1 ? 'night' : 'nights'}</p>
-                                        </div>
-                                        <div className="col-span-2">
-                                            <p className="text-sm text-gray-500">Guests</p>
-                                            <p className="font-medium">{stayInfo.adults} {stayInfo.adults === 1 ? 'Adult' : 'Adults'}{stayInfo.children > 0 ? `, ${stayInfo.children} ${stayInfo.children === 1 ? 'Child' : 'Children'}` : ''}</p>
-                                        </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                        <input
+                                            type="tel"
+                                            value={guest.phone}
+                                            onChange={(e) => setGuest({ ...guest, phone: e.target.value })}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all outline-none"
+                                            placeholder="+1 234 567 890"
+                                        />
                                     </div>
-                                </div>
-                            </section>
-
-                            {/* Selected Rooms */}
-                            <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="p-6 border-b border-gray-100">
-                                    <h3 className="text-lg font-semibold text-gray-900">Your Selected Rooms</h3>
-                                </div>
-                                <div className="divide-y divide-gray-100">
-                                    {selectedRooms.map((room) => (
-                                        <div key={`${room.roomId}-${room.ratePlanId}`} className="p-6">
-                                            <div className="flex justify-between items-start">
-                                                <div>
-                                                    <h4 className="font-medium text-gray-900">{room.roomType}</h4>
-                                                    <p className="text-sm text-gray-500 mt-1">{room.ratePlanName}</p>
-                                                    <div className="mt-2 text-sm text-gray-600">
-                                                        <span className="font-medium">{room.quantity} {room.quantity === 1 ? 'room' : 'rooms'}</span>
-                                                        <span className="mx-2">•</span>
-                                                        <span>${room.price} per night</span>
-                                                    </div>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="font-semibold">${(room.price * room.quantity).toFixed(2)}</p>
-                                                    <p className="text-sm text-gray-500">Total for {nights} {nights === 1 ? 'night' : 'nights'}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-
-                            {/* Guest Information */}
-                            <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="p-6 border-b border-gray-100">
-                                    <h3 className="text-lg font-semibold text-gray-900">Guest Information</h3>
-                                    <p className="text-sm text-gray-500 mt-1">Enter the details of the main guest</p>
-                                </div>
-                                <div className="p-6 space-y-4">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-                                                Full Name <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                id="fullName"
-                                                type="text"
-                                                value={guest.name}
-                                                onChange={(e) => setGuest({ ...guest, name: e.target.value })}
-                                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                                placeholder="John Doe"
-                                                required
-                                            />
-                                        </div>
-                                        <div>
-                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                                                Email Address <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                id="email"
-                                                type="email"
-                                                value={guest.email}
-                                                onChange={(e) => setGuest({ ...guest, email: e.target.value })}
-                                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                                placeholder="your@email.com"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                                                Phone Number <span className="text-red-500">*</span>
-                                            </label>
-                                            <input
-                                                id="phone"
-                                                type="tel"
-                                                value={guest.phone}
-                                                onChange={(e) => setGuest({ ...guest, phone: e.target.value })}
-                                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                                placeholder="+1 (555) 000-0000"
-                                                required
-                                            />
-                                        </div>
-                                        <div>
-                                            <label htmlFor="nationality" className="block text-sm font-medium text-gray-700 mb-1">
-                                                Nationality
-                                            </label>
-                                            <input
-                                                id="nationality"
-                                                type="text"
-                                                value={guest.nationality}
-                                                onChange={(e) => setGuest({ ...guest, nationality: e.target.value })}
-                                                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                                placeholder="Your nationality"
-                                            />
-                                        </div>
+                                    <div className="md:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Nationality (Optional)</label>
+                                        <input
+                                            type="text"
+                                            value={guest.nationality}
+                                            onChange={(e) => setGuest({ ...guest, nationality: e.target.value })}
+                                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all outline-none"
+                                            placeholder="Your nationality"
+                                        />
                                     </div>
                                 </div>
                             </section>
 
                             {/* Payment Method */}
-                            <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="p-6 border-b border-gray-100">
-                                    <h3 className="text-lg font-semibold text-gray-900">Payment Method</h3>
-                                    <p className="text-sm text-gray-500 mt-1">How would you like to pay?</p>
-                                </div>
-                                <div className="p-6 space-y-4">
-                                    <div className="space-y-3">
-                                        <label className={`flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${paymentMethod === 'VN_PAY' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}>
-                                            <input
-                                                type="radio"
-                                                name="payment"
-                                                value="VN_PAY"
-                                                checked={paymentMethod === 'VN_PAY'}
-                                                onChange={(e) => setPaymentMethod(e.target.value)}
-                                                className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300"
-                                            />
-                                            <div className="ml-3 flex items-center">
-                                                <img src="https://yt3.googleusercontent.com/JM1m2wng0JQUgSg9ZSEvz7G4Rwo7pYb4QBYip4PAhvGRyf1D_YTbL2DdDjOy0qOXssJPdz2r7Q=s900-c-k-c0x00ffffff-no-rj" alt="VN_PAY" className="h-6 w-auto mr-3" />
-                                                <div>
-                                                    <span className="block text-sm font-medium text-gray-900">VNPAY</span>
-                                                    <span className="block text-xs text-gray-500">Thanh toán qua cổng VNPAY</span>
-                                                </div>
-                                            </div>
-                                        </label>
-
-                                        <label className={`flex items-center p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors ${paymentMethod === 'CASH' ? 'border-blue-500 bg-blue-50' : 'border-gray-200'}`}>
-                                            <input
-                                                type="radio"
-                                                name="payment"
-                                                value="CASH"
-                                                checked={paymentMethod === 'CASH'}
-                                                onChange={(e) => setPaymentMethod(e.target.value)}
-                                                className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300"
-                                            />
-                                            <div className="ml-3 flex items-center">
-                                                <Banknote className="h-6 w-6 text-gray-700 mr-3" />
-                                                <div>
-                                                    <span className="block text-sm font-medium text-gray-900">Cash</span>
-                                                    <span className="block text-xs text-gray-500">Pay at check In</span>
-                                                </div>
-                                            </div>
-                                        </label>
+                            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div className="p-6 border-b border-gray-100 flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                        <CreditCard className="w-5 h-5" />
                                     </div>
+                                    <div>
+                                        <h3 className="text-lg font-bold text-gray-900">Payment Method</h3>
+                                        <p className="text-sm text-gray-500">Secure payment options</p>
+                                    </div>
+                                </div>
+                                <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <label className={`relative flex flex-col p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${paymentMethod === 'VN_PAY' ? 'border-blue-600 bg-blue-50/50' : 'border-gray-100 hover:border-gray-300'}`}>
+                                        <input
+                                            type="radio"
+                                            name="payment"
+                                            value="VN_PAY"
+                                            checked={paymentMethod === 'VN_PAY'}
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
+                                            className="absolute top-4 right-4 h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300"
+                                        />
+                                        <div className="w-12 h-8 mb-4">
+                                            <img src="https://yt3.googleusercontent.com/JM1m2wng0JQUgSg9ZSEvz7G4Rwo7pYb4QBYip4PAhvGRyf1D_YTbL2DdDjOy0qOXssJPdz2r7Q=s900-c-k-c0x00ffffff-no-rj" alt="VNPAY" className="w-full h-full object-contain" />
+                                        </div>
+                                        <span className="font-bold text-gray-900">VNPAY Wallet</span>
+                                        <span className="text-sm text-gray-500 mt-1">Instant payment via QR or Card</span>
+                                    </label>
+
+                                    <label className={`relative flex flex-col p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${paymentMethod === 'CASH' ? 'border-blue-600 bg-blue-50/50' : 'border-gray-100 hover:border-gray-300'}`}>
+                                        <input
+                                            type="radio"
+                                            name="payment"
+                                            value="CASH"
+                                            checked={paymentMethod === 'CASH'}
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
+                                            className="absolute top-4 right-4 h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300"
+                                        />
+                                        <div className="w-12 h-8 mb-4 flex items-center justify-start text-green-600">
+                                            <Banknote className="w-8 h-8" />
+                                        </div>
+                                        <span className="font-bold text-gray-900">Cash Payment</span>
+                                        <span className="text-sm text-gray-500 mt-1">Pay at the property upon check-in</span>
+                                    </label>
                                 </div>
                             </section>
 
                             {/* Special Requests */}
-                            <section className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                            <section className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                                 <div className="p-6 border-b border-gray-100">
-                                    <h3 className="text-lg font-semibold text-gray-900">Special Requests</h3>
-                                    <p className="text-sm text-gray-500 mt-1">Let us know if you have any special requirements</p>
+                                    <h3 className="font-bold text-gray-900">Special Requests</h3>
                                 </div>
                                 <div className="p-6">
                                     <textarea
-                                        rows={4}
+                                        rows={3}
                                         value={specialRequest}
                                         onChange={(e) => setSpecialRequest(e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
-                                        placeholder="E.g., Early check-in, late check-out, room preferences, etc."
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all outline-none resize-none"
+                                        placeholder="Any specific preferences or requests?"
                                     />
-                                    <p className="mt-2 text-sm text-gray-500">
-                                        We'll do our best to accommodate your requests, but they can't be guaranteed.
-                                    </p>
                                 </div>
                             </section>
                         </div>
 
-                        {/* Right Column - Booking Summary */}
-                        <div className="lg:sticky lg:top-8 h-fit">
-                            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div className="p-6 border-b border-gray-100">
-                                    <h3 className="text-lg font-semibold text-gray-900">Booking Summary</h3>
-                                </div>
-                                <div className="p-6 space-y-4">
-                                    <div className="space-y-3">
+                        {/* Right Column - Summary */}
+                        <div className="lg:col-span-1">
+                            <div className="sticky top-8 space-y-6">
+                                {/* Price Summary Card */}
+                                <div className="bg-white rounded-2xl shadow-lg shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                                    <div className="p-6 border-b border-dashed border-gray-200 bg-gray-50/50">
+                                        <h3 className="text-lg font-bold text-gray-900">Price Breakdown</h3>
+                                        <p className="text-sm text-gray-500">{nights} {nights === 1 ? 'night' : 'nights'} stay</p>
+                                    </div>
+                                    <div className="p-6 space-y-4">
                                         {selectedRooms.map((room) => (
-                                            <div key={`${room.roomId}-${room.ratePlanId}`} className="flex justify-between">
-                                                <div>
-                                                    <p className="font-medium text-gray-900">{room.roomType}</p>
-                                                    <p className="text-sm text-gray-500">{room.ratePlanName}</p>
-                                                    <p className="text-xs text-gray-400">{room.quantity} {room.quantity === 1 ? 'room' : 'rooms'} × {nights} {nights === 1 ? 'night' : 'nights'}</p>
+                                            <div key={`${room.roomId}-${room.ratePlanId}`} className="flex justify-between text-sm">
+                                                <div className="text-gray-600">
+                                                    <span className="font-medium text-gray-900">{room.roomType}</span>
+                                                    <div className="text-xs text-gray-400">x{room.quantity} rooms</div>
                                                 </div>
-                                                <p className="font-medium text-gray-900">${(room.price * room.quantity * nights).toFixed(2)}</p>
+                                                <div className="font-medium text-gray-900">
+                                                    ${(room.price * room.quantity * nights).toFixed(2)}
+                                                </div>
                                             </div>
                                         ))}
-                                    </div>
 
-                                    <div className="border-t border-gray-200 pt-4 space-y-3">
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-600">Subtotal</span>
-                                            <span className="font-medium">${totalAmount * nights}</span>
+                                        <div className="pt-4 border-t border-dashed border-gray-200 space-y-2">
+                                            <div className="flex justify-between text-sm text-gray-500">
+                                                <span>Subtotal</span>
+                                                <span>${(totalAmount * nights).toFixed(2)}</span>
+                                            </div>
+                                            <div className="flex justify-between text-sm text-gray-500">
+                                                <span>Taxes & Fees (12%)</span>
+                                                <span>${(totalAmount * 0.12 * nights).toFixed(2)}</span>
+                                            </div>
                                         </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-gray-600">Taxes & Fees</span>
-                                            <span className="font-medium">${(totalAmount * 0.12 * nights).toFixed(2)}</span>
-                                        </div>
-                                        <div className="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
-                                            <span>Total</span>
-                                            <span>${(totalAmount * 1.12 * nights).toFixed(2)}</span>
-                                        </div>
-                                    </div>
 
-                                    <div className="pt-4">
+                                        <div className="pt-4 border-t border-gray-200">
+                                            <div className="flex justify-between items-end">
+                                                <span className="font-bold text-xl text-gray-900">Total</span>
+                                                <span className="font-bold text-2xl text-blue-600">
+                                                    ${(totalAmount * 1.12 * nights).toFixed(2)}
+                                                </span>
+                                            </div>
+                                            <p className="text-xs text-gray-400 mt-1 text-right">Includes all taxes and fees</p>
+                                        </div>
+
                                         <button
                                             onClick={handleConfirmBooking}
                                             disabled={isSubmitting}
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
+                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
                                         >
                                             {isSubmitting ? (
                                                 <>
-                                                    <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" />
+                                                    <Loader2 className="animate-spin h-5 w-5" />
                                                     Processing...
                                                 </>
                                             ) : (
-                                                'Confirm Booking'
+                                                <>
+                                                    <ShieldCheck className="w-5 h-5" />
+                                                    Confirm Booking
+                                                </>
                                             )}
                                         </button>
-                                        <p className="mt-3 text-xs text-gray-500 text-center">
-                                            By confirming this booking, you agree to our Terms of Service and Privacy Policy.
+                                        <p className="text-xs text-center text-gray-400">
+                                            Secure booking powered by Booking Platform
                                         </p>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="mt-6 p-6 bg-blue-50 rounded-xl border border-blue-100">
-                                <h4 className="font-medium text-blue-800 mb-2">Good to know</h4>
-                                <ul className="space-y-2 text-sm text-blue-700">
-                                    <li className="flex items-start">
-                                        <svg className="h-4 w-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        <span>Free cancellation up to 24 hours before check-in</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <svg className="h-4 w-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        <span>No prepayment needed - pay at the property</span>
-                                    </li>
-                                    <li className="flex items-start">
-                                        <svg className="h-4 w-4 text-blue-500 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        <span>Best price guarantee</span>
-                                    </li>
-                                </ul>
+                                {/* Trust Badges */}
+                                <div className="bg-blue-50 rounded-xl p-5 border border-blue-100">
+                                    <h4 className="font-bold text-blue-900 mb-3 text-sm">Free Cancellation</h4>
+                                    <p className="text-xs text-blue-700 leading-relaxed">
+                                        Cancel for free up to 24 hours before check-in. Plans change, we understand.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
